@@ -85,5 +85,4 @@ public class Member {
         return "Member [id=" + id + ", prename=" + prename + ", lastname=" + lastname + ", password=" + password
                 + ", username=" + username + ", authority=" + authority + "]";
     }
-
 }

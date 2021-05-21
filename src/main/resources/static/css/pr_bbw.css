@@ -1,5 +1,5 @@
 .pr_bg_green {
-  background: #90CC90;
+  background: #90cc90;
 }
 
 .pr_border_solid {
@@ -16,10 +16,9 @@
   transform: translate(50%, 25%);
 }
 
-.panel-body
-{
-    overflow-y: scroll;
-    height: 500px;
+.panel-body {
+  overflow-y: scroll;
+  height: 500px;
 }
 
 .media-list .media {
