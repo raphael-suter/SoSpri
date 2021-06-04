@@ -1,6 +1,5 @@
 package ch.bbw.pr.sospri.member;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,8 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MemberService {
-    @Autowired
-    private MemberRepository repository;
+    private final MemberRepository repository;
+
+    public MemberService(MemberRepository repository) {
+        this.repository = repository;
+    }
 
     public Iterable<Member> getAll() {
         return repository.findAll();

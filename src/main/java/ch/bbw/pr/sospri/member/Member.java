@@ -1,8 +1,6 @@
 package ch.bbw.pr.sospri.member;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 /**
  * Member Entity
@@ -18,18 +16,23 @@ public class Member {
     @SequenceGenerator(name = "generatorMember", initialValue = 20)
     private Long id;
 
-    @NotEmpty(message = "prename may not be empty")
-    @Size(min = 2, max = 512, message = "Die Länge des Vornamens muss 2 bis 25 Zeichen sein.")
     private String prename;
-
-    @NotEmpty(message = "lastname may not be empty")
-    @Size(min = 2, max = 20, message = "Die Länge des Nachnamens 2 bis 25 Zeichen sein.")
     private String lastname;
-
     private String password;
     private String username;
-
     private String authority;
+
+    public Member() {
+        super();
+    }
+
+    public Member(String prename, String lastname, String password, String username, String authority) {
+        this.prename = prename;
+        this.lastname = lastname;
+        this.password = password;
+        this.username = username;
+        this.authority = authority;
+    }
 
     public Long getId() {
         return id;
@@ -54,7 +57,6 @@ public class Member {
     public void setLastname(String lastname) {
         this.lastname = lastname;
     }
-
 
     public String getPassword() {
         return password;
@@ -82,7 +84,13 @@ public class Member {
 
     @Override
     public String toString() {
-        return "Member [id=" + id + ", prename=" + prename + ", lastname=" + lastname + ", password=" + password
-                + ", username=" + username + ", authority=" + authority + "]";
+        return "Member{" +
+                "id=" + id +
+                ", prename='" + prename + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", authority='" + authority + '\'' +
+                '}';
     }
 }

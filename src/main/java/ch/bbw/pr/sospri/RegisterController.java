@@ -1,10 +1,12 @@
 package ch.bbw.pr.sospri;
 
+import ch.bbw.pr.sospri.member.Member;
+import ch.bbw.pr.sospri.member.MemberFormData;
 import ch.bbw.pr.sospri.member.MemberService;
-import ch.bbw.pr.sospri.member.RegisterMember;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
@@ -16,24 +18,45 @@ import org.springframework.web.bind.annotation.PostMapping;
  */
 @Controller
 public class RegisterController {
-    @Autowired
-    MemberService memberservice;
+    final MemberService memberservice;
+
+    public RegisterController(MemberService memberservice) {
+        this.memberservice = memberservice;
+    }
 
     @GetMapping("/get-register")
     public String getRequestRegistMembers(Model model) {
         System.out.println("getRequestRegistMembers");
-        model.addAttribute("registerMember", new RegisterMember());
+        model.addAttribute("memberFormData", new MemberFormData());
 
         return "register";
     }
 
     @PostMapping("/get-register")
-    public String postRequestRegistMembers(RegisterMember registerMember, Model model) {
-        System.out.println("postRequestRegistMembers: registerMember");
-        System.out.println(registerMember);
+    public String postRequestRegistMembers(@Validated MemberFormData memberFormData, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
 
-        //Hier ergänzen
+        String username = memberFormData.getPrename().toLowerCase()
+                + "."
+                + memberFormData.getLastname().toLowerCase();
 
+        if (memberservice.getByUserName(username) != null) {
+            memberFormData.setMessage("Dieser Benutzername (" + username + ") existiert bereits.");
+            model.addAttribute("memberFormData", memberFormData);
+
+            return "register";
+        }
+
+        if (!memberFormData.getPassword().equals(memberFormData.getConfirmation())) {
+            memberFormData.setMessage("Die Passwörter stimmen nicht überein.");
+            model.addAttribute("memberFormData", memberFormData);
+
+            return "register";
+        }
+
+        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), memberFormData.getPassword(), username, "member"));
         return "registerconfirmed";
     }
 }
