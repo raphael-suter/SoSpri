@@ -3,12 +3,12 @@
   <head>
     <title>SoSpri-the-page</title>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
     <link
-      rel="stylesheet"
       href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/pr_bbw.css" />
+    <link href="css/pr_bbw.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
     <script>
@@ -29,9 +29,9 @@
               <div class="row">
                 <div class="col-lg-8 col-lg-offset-2">
                   <form
+                    action=""
                     id="members-form"
                     method="post"
-                    action=""
                     role="form"
                     th:switch="${members}"
                   >
@@ -42,6 +42,7 @@
                       </caption>
                       <thead>
                         <tr>
+                          <th>Username</th>
                           <th>Lastname</th>
                           <th>Firstname</th>
                           <th>Rolle</th>
@@ -51,6 +52,7 @@
                       </thead>
                       <tbody>
                         <tr th:each="member : ${members}">
+                          <td th:text="${member.username}"></td>
                           <td th:text="${member.prename}"></td>
                           <td th:text="${member.lastname}"></td>
                           <td th:text="${member.authority}"></td>

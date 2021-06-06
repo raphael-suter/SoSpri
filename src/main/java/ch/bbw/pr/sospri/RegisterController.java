@@ -45,11 +45,10 @@ public class RegisterController {
                 + "."
                 + memberFormData.getLastname().toLowerCase();
 
-        if (memberservice.getByUserName(username) != null) {
-            memberFormData.setMessage("Dieser Benutzername (" + username + ") existiert bereits.");
-            model.addAttribute("memberFormData", memberFormData);
+        String output = username;
 
-            return "register";
+        for (int count = 2; memberservice.getByUserName(output) != null; count++) {
+            output = username + "_" + count;
         }
 
         if (!memberFormData.getPassword().equals(memberFormData.getConfirmation())) {
@@ -60,8 +59,8 @@ public class RegisterController {
         }
 
         String encodedPassword = webSecurityConfig.passwordEncoder().encode(memberFormData.getPassword());
-        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), encodedPassword, username, "member"));
-        model.addAttribute("message", "Willkommen bei SoSpri " + username + "!");
+        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), encodedPassword, output, "member"));
+        model.addAttribute("message", "Willkommen bei SoSpri " + output + "!");
 
         return "registerconfirmed";
     }
