@@ -57,6 +57,8 @@ public class RegisterController {
         }
 
         memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), memberFormData.getPassword(), username, "member"));
+        model.addAttribute("message", "Willkommen bei SoSpri " + username + "!");
+
         return "registerconfirmed";
     }
 }
