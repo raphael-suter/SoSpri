@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <title>SoSpri-the-page</title>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link href="css/pr_bbw.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script>
+      $(function () {
+        $("#includedHeader").load("fragments/header.html");
+        $("#includedFooter").load("fragments/footer.html");
+      });
+    </script>
+  </head>
+  <body>
+    <div id="includedHeader"></div>
+    <section>
+      <div class="container">
+        <div class="row">
+          <div class="col-sm-12">
+            <div>
+              <h4 style="margin-top: 30px">Login</h4>
+              <div class="row">
+                <div class="col-lg-8 col-lg-offset-2">
+                  <!--/*@thymesVar id="memberFormData" type="ch.bbw.pr.sospri.member.MemberFormData"*/-->
+                  <form id="login-form" method="post" th:action="@{/login}">
+                    <div th:if="${param.error}" class="alert alert-danger">
+                      Invalid username or password.
+                    </div>
+                    <div th:if="${param.logout}" class="alert alert-success">
+                      You have been logged out.
+                    </div>
+                    <div class="controls">
+                      <div class="row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="form_name">Benutzername *</label>
+                            <input
+                              class="form-control"
+                              data-error="Firstname is required."
+                              id="form_name"
+                              name="username"
+                              placeholder="Please enter your username *"
+                              required="required"
+                              type="text"
+                            />
+                            <div class="help-block with-errors"></div>
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            <label for="form_lastname">Password *</label>
+                            <input
+                              class="form-control"
+                              data-error="Lastname is required."
+                              id="form_lastname"
+                              name="password"
+                              placeholder="Please enter your password *"
+                              required="required"
+                              type="password"
+                            />
+                            <div class="help-block with-errors"></div>
+                          </div>
+                        </div>
+                      </div>
+                      <input
+                        class="btn btn-success btn-send"
+                        type="submit"
+                        value="Login"
+                      />
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+            <div style="height: 200px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <div id="includedFooter"></div>
+  </body>
+</html>
