@@ -1,3 +1,7 @@
+body {
+  overflow-x: hidden;
+}
+
 .pr_bg_green {
   background: #90cc90;
 }
