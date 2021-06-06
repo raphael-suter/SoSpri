@@ -3,12 +3,15 @@ package ch.bbw.pr.sospri;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberFormData;
 import ch.bbw.pr.sospri.member.MemberService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.security.SecureRandom;
 
 /**
  * Register Controller
@@ -56,7 +59,11 @@ public class RegisterController {
             return "register";
         }
 
-        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), memberFormData.getPassword(), username, "member"));
+        int strength = 10;
+        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(strength, new SecureRandom());
+        String encodedPassword = bCryptPasswordEncoder.encode(memberFormData.getPassword());
+
+        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), encodedPassword, username, "member"));
         model.addAttribute("message", "Willkommen bei SoSpri " + username + "!");
 
         return "registerconfirmed";
