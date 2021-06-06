@@ -59,7 +59,7 @@ public class RegisterController {
         }
 
         String encodedPassword = webSecurityConfig.passwordEncoder().encode(memberFormData.getPassword());
-        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), encodedPassword, output, "member"));
+        memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), encodedPassword, output, "member", System.currentTimeMillis()));
         model.addAttribute("message", "Willkommen bei SoSpri " + output + "!");
 
         return "registerconfirmed";

@@ -15,4 +15,9 @@ public class DefaultController {
     public String logout(Model model) {
         return "logout";
     }
+
+    @RequestMapping("/change-password")
+    public String change_password(Model model) {
+        return "change_password";
+    }
 }

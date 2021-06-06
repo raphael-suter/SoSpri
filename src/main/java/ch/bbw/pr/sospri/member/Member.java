@@ -11,6 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "member")
 public class Member {
+    private static final long PASSWORD_EXPIRATION_TIME = 60 * 1000;
+
     @Id
     @GeneratedValue(generator = "generatorMember", strategy = GenerationType.SEQUENCE)
     @SequenceGenerator(name = "generatorMember", initialValue = 20)
@@ -21,17 +23,29 @@ public class Member {
     private String password;
     private String username;
     private String authority;
+    private long pw_changed;
 
     public Member() {
         super();
     }
 
-    public Member(String prename, String lastname, String password, String username, String authority) {
+    public Member(String prename, String lastname, String password, String username, String authority, long pw_changed) {
+        this.id = id;
         this.prename = prename;
         this.lastname = lastname;
         this.password = password;
         this.username = username;
         this.authority = authority;
+        this.pw_changed = pw_changed;
+    }
+
+    public boolean isPasswordExpired() {
+        if (this.pw_changed == 0) return false;
+
+        long currentTime = System.currentTimeMillis();
+        long lastChangedTime = this.pw_changed;
+
+        return currentTime > lastChangedTime + PASSWORD_EXPIRATION_TIME;
     }
 
     public Long getId() {
@@ -82,6 +96,14 @@ public class Member {
         this.authority = authority;
     }
 
+    public long getPw_changed() {
+        return pw_changed;
+    }
+
+    public void setPw_changed(long pw_changed) {
+        this.pw_changed = pw_changed;
+    }
+
     @Override
     public String toString() {
         return "Member{" +
@@ -91,6 +113,7 @@ public class Member {
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
                 ", authority='" + authority + '\'' +
+                ", pw_changed=" + pw_changed +
                 '}';
     }
 }

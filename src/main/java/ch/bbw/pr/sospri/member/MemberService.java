@@ -69,4 +69,6 @@ public class MemberService implements UserDetailsService {
         Member member = getByUserName(s);
         return MemberToUserDetailsMapper.toUserDetails(member);
     }
+
+
 }

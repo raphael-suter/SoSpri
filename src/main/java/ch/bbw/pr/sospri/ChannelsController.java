@@ -4,7 +4,6 @@ import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.message.Message;
 import ch.bbw.pr.sospri.message.MessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -25,11 +24,16 @@ import java.util.Date;
  */
 @Controller
 public class ChannelsController {
-    @Autowired
+    final
     MessageService messageservice;
 
-    @Autowired
+    final
     MemberService memberservice;
+
+    public ChannelsController(MessageService messageservice, MemberService memberservice) {
+        this.messageservice = messageservice;
+        this.memberservice = memberservice;
+    }
 
     @GetMapping("/get-channel")
     public String getRequestChannel(Model model) {
