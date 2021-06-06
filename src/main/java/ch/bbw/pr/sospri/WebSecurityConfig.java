@@ -1,7 +1,6 @@
 package ch.bbw.pr.sospri;
 
 import ch.bbw.pr.sospri.member.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -9,14 +8,17 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
+
+    public WebSecurityConfig(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
@@ -30,7 +32,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        String pepper = "P0ydHhy0g0BrGjrqcv29";
+        int iterations = 200000;
+        int hashWidth = 256;
+
+        return new Pbkdf2PasswordEncoder(pepper, iterations, hashWidth);
     }
 
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

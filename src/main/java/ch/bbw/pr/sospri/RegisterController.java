@@ -3,15 +3,12 @@ package ch.bbw.pr.sospri;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberFormData;
 import ch.bbw.pr.sospri.member.MemberService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.security.SecureRandom;
 
 /**
  * Register Controller
@@ -21,10 +18,13 @@ import java.security.SecureRandom;
  */
 @Controller
 public class RegisterController {
+    private final WebSecurityConfig webSecurityConfig;
+
     final MemberService memberservice;
 
-    public RegisterController(MemberService memberservice) {
+    public RegisterController(MemberService memberservice, WebSecurityConfig webSecurityConfig) {
         this.memberservice = memberservice;
+        this.webSecurityConfig = webSecurityConfig;
     }
 
     @GetMapping("/get-register")
@@ -59,10 +59,7 @@ public class RegisterController {
             return "register";
         }
 
-        int strength = 10;
-        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(strength, new SecureRandom());
-        String encodedPassword = bCryptPasswordEncoder.encode(memberFormData.getPassword());
-
+        String encodedPassword = webSecurityConfig.passwordEncoder().encode(memberFormData.getPassword());
         memberservice.add(new Member(memberFormData.getPrename(), memberFormData.getLastname(), encodedPassword, username, "member"));
         model.addAttribute("message", "Willkommen bei SoSpri " + username + "!");
 

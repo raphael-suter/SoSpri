@@ -37,8 +37,6 @@ public class ChannelsController {
         model.addAttribute("messages", messageservice.getAll());
 
         Message message = new Message();
-        message.setContent("Der zweite Pfeil trifft immer.");
-        System.out.println("message: " + message);
         model.addAttribute("message", message);
 
         return "channel";
