@@ -48,7 +48,18 @@ public class PasswordExpirationFilter implements Filter {
     private boolean isUrlExcluded(HttpServletRequest httpRequest) throws IOException, ServletException {
         String url = httpRequest.getRequestURL().toString();
 
-        if (url.endsWith(".css") || url.endsWith(".png") || url.endsWith(".js") || url.endsWith("/change-password")) {
+        if (url.contains("/h2-console/")
+                || url.contains("/css/")
+                || url.contains("/fragments/")
+                || url.contains("/img/")
+                || url.contains("/403.html")
+                || url.contains("/404.html")
+                || url.contains("/contact.html")
+                || url.contains("/index.html")
+                || url.contains("/login")
+                || url.contains("/get-register")
+                || url.contains("/change-password")
+                || url.contains("/logout-page")) {
             return true;
         }
 
