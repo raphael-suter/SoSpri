@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class RegisterController {
     private final WebSecurityConfig webSecurityConfig;
-
-    final MemberService memberservice;
+    private final MemberService memberservice;
 
     public RegisterController(MemberService memberservice, WebSecurityConfig webSecurityConfig) {
         this.memberservice = memberservice;
@@ -48,7 +47,7 @@ public class RegisterController {
         String output = username;
 
         for (int count = 2; memberservice.getByUserName(output) != null; count++) {
-            output = username + "_" + count;
+            output = username + count;
         }
 
         if (!memberFormData.getPassword().equals(memberFormData.getConfirmation())) {

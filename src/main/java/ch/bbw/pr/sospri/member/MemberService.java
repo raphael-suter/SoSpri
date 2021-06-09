@@ -29,7 +29,7 @@ public class MemberService implements UserDetailsService {
         repository.save(member);
     }
 
-    public void update(Long id, Member member) {
+    public void update(Member member) {
         //save geht auch für update.
         repository.save(member);
     }

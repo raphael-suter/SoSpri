@@ -44,7 +44,7 @@ public class MembersController {
         Member value = memberservice.getById(member.getId());
         value.setAuthority(member.getAuthority());
         System.out.println("editMember post: update member" + value);
-        memberservice.update(member.getId(), value);
+        memberservice.update(value);
 
         return "redirect:/get-members";
     }
