@@ -22,32 +22,46 @@ public class PasswordExpirationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        HttpServletResponse httpResponse = (HttpServletResponse) response;
+        Member currentlyLoggedIn = getMember();
 
-        if (isUrlExcluded(httpRequest)) {
-            chain.doFilter(request, response);
+        String url = httpRequest
+                .getRequestURL()
+                .toString();
+
+        if (passwordExpirationCheckNecessary(url) && currentlyLoggedIn != null && currentlyLoggedIn.isPasswordExpired()) {
+            redirect(httpRequest, httpResponse, "/change-password");
             return;
         }
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        chain.doFilter(request, response);
+    }
+
+    private void redirect(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, String to) {
+        try {
+            String redirectURL = httpServletRequest.getContextPath() + to;
+            httpServletResponse.sendRedirect(redirectURL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Member getMember() {
         Member tmpMember = null;
+
+        Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
         if (principal instanceof UserDetails) {
             tmpMember = memberService.getByUserName(((UserDetails) principal).getUsername());
         }
 
-        if (tmpMember != null && tmpMember.isPasswordExpired()) {
-            HttpServletResponse httpResponse = (HttpServletResponse) response;
-            String redirectURL = httpRequest.getContextPath() + "/change-password";
-            httpResponse.sendRedirect(redirectURL);
-        } else {
-            chain.doFilter(httpRequest, response);
-        }
-
+        return tmpMember;
     }
 
-    private boolean isUrlExcluded(HttpServletRequest httpRequest) throws IOException, ServletException {
-        String url = httpRequest.getRequestURL().toString();
-
+    private boolean passwordExpirationCheckNecessary(String url) {
         if (url.contains("/h2-console/")
                 || url.contains("/css/")
                 || url.contains("/fragments/")
@@ -60,9 +74,9 @@ public class PasswordExpirationFilter implements Filter {
                 || url.contains("/get-register")
                 || url.contains("/change-password")
                 || url.contains("/logout-page")) {
-            return true;
+            return false;
         }
 
-        return false;
+        return true;
     }
 }

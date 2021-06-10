@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Table(name = "member")
 public class Member {
     private static final long PASSWORD_EXPIRATION_TIME = 60 * 1000;
-    private static final long LOGIN_EXPIRATION_TIME = 2 * 60 * 1000;
 
     @Id
     @GeneratedValue(generator = "generatorMember", strategy = GenerationType.SEQUENCE)
@@ -25,7 +24,6 @@ public class Member {
     private String username;
     private String authority;
     private long pw_changed;
-    private long login_expired;
 
     public Member(String prename, String lastname, String password, String username, String authority, long pw_changed) {
         this.prename = prename;
@@ -41,7 +39,9 @@ public class Member {
     }
 
     public boolean isPasswordExpired() {
-        if (this.pw_changed == 0) return false;
+        if (this.pw_changed == 0) {
+            return false;
+        }
 
         long currentTime = System.currentTimeMillis();
         long lastChangedTime = this.pw_changed;
@@ -105,14 +105,6 @@ public class Member {
         this.pw_changed = pw_changed;
     }
 
-    public long getLogin_expired() {
-        return login_expired;
-    }
-
-    public void setLogin_expired(long login_expired) {
-        this.login_expired = login_expired;
-    }
-
     @Override
     public String toString() {
         return "Member{" +
@@ -123,7 +115,6 @@ public class Member {
                 ", username='" + username + '\'' +
                 ", authority='" + authority + '\'' +
                 ", pw_changed=" + pw_changed +
-                ", login_expired=" + login_expired +
                 '}';
     }
 }
