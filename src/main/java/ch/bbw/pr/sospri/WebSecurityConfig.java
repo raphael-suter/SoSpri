@@ -33,6 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         String pepper = "P0ydHhy0g0BrGjrqcv29";
+
         int iterations = 200000;
         int hashWidth = 256;
 
