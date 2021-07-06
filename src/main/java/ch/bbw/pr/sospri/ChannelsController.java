@@ -4,6 +4,8 @@ import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
 import ch.bbw.pr.sospri.message.Message;
 import ch.bbw.pr.sospri.message.MessageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,8 @@ import java.util.Date;
  */
 @Controller
 public class ChannelsController {
+    private Logger logger = LoggerFactory.getLogger(ChannelsController.class);
+
     final
     MessageService messageservice;
 
@@ -37,7 +41,7 @@ public class ChannelsController {
 
     @GetMapping("/get-channel")
     public String getRequestChannel(Model model) {
-        System.out.println("getRequestChannel");
+        logger.debug("/get-channel: GET");
         model.addAttribute("messages", messageservice.getAll());
 
         Message message = new Message();
@@ -48,10 +52,9 @@ public class ChannelsController {
 
     @PostMapping("/add-message")
     public String postRequestChannel(Model model, @ModelAttribute @Valid Message message, BindingResult bindingResult) {
-        System.out.println("postRequestChannel(): message: " + message.toString());
+        logger.debug("/add-message: POST");
 
         if (bindingResult.hasErrors()) {
-            System.out.println("postRequestChannel(): has Error(s): " + bindingResult.getErrorCount());
             model.addAttribute("messages", messageservice.getAll());
             return "channel";
         }
@@ -65,7 +68,6 @@ public class ChannelsController {
 
         message.setAuthor(tmpMember.getPrename() + " " + tmpMember.getLastname());
         message.setOrigin(new Date());
-        System.out.println("message: " + message);
         messageservice.add(message);
 
         return "redirect:/get-channel";

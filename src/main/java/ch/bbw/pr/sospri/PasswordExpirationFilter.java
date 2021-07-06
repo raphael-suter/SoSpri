@@ -2,6 +2,8 @@ package ch.bbw.pr.sospri;
 
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import java.io.IOException;
 
 @Component
 public class PasswordExpirationFilter implements Filter {
+    private Logger logger = LoggerFactory.getLogger(PasswordExpirationFilter.class);
     private final MemberService memberService;
 
     public PasswordExpirationFilter(MemberService memberService) {
@@ -30,6 +33,13 @@ public class PasswordExpirationFilter implements Filter {
                 .toString();
 
         if (passwordExpirationCheckNecessary(url) && currentlyLoggedIn != null && currentlyLoggedIn.isPasswordExpired()) {
+            Object principal = SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            logger.info("Passwort ist abgelaufen. User: " + ((UserDetails) principal).getUsername());
+
             redirect(httpRequest, httpResponse, "/change-password");
             return;
         }
@@ -42,6 +52,7 @@ public class PasswordExpirationFilter implements Filter {
             String redirectURL = httpServletRequest.getContextPath() + to;
             httpServletResponse.sendRedirect(redirectURL);
         } catch (IOException e) {
+            logger.error("Redirect konnte nicht ausgeführt werden: " + e.getMessage());
             e.printStackTrace();
         }
     }

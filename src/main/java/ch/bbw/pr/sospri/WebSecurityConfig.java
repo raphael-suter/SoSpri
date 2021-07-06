@@ -1,6 +1,8 @@
 package ch.bbw.pr.sospri;
 
 import ch.bbw.pr.sospri.member.MemberService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -8,12 +10,14 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+    private Logger logger = LoggerFactory.getLogger(WebSecurityConfig.class);
     private final MemberService memberService;
 
     public WebSecurityConfig(MemberService memberService) {
@@ -76,8 +80,32 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin()
                 .loginPage("/login")
+                .failureHandler((request, response, exception) -> {
+                    String username = request.getParameter("username");
+
+                    logger.warn("Login fehlgeschlagen. User: " + username);
+
+                    String redirectUrl = request.getContextPath() + "/login?error";
+                    response.sendRedirect(redirectUrl);
+                })
+                .successHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                    String username = userDetails.getUsername();
+
+                    logger.info("Login erfolgreich. User: " + username);
+
+                    httpServletResponse.sendRedirect(httpServletRequest.getContextPath());
+                })
                 .and()
                 .logout()
+                .logoutSuccessHandler((httpServletRequest, httpServletResponse, authentication) -> {
+                    UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+                    String username = userDetails.getUsername();
+
+                    logger.info("Logout erfolgreich. User: " + username);
+
+                    httpServletResponse.sendRedirect(httpServletRequest.getContextPath());
+                })
                 .and()
                 .sessionManagement()
                 .invalidSessionUrl("/login")

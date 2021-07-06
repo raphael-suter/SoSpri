@@ -3,6 +3,8 @@ package ch.bbw.pr.sospri;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberFormData;
 import ch.bbw.pr.sospri.member.MemberService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  */
 @Controller
 public class RegisterController {
+    private Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final WebSecurityConfig webSecurityConfig;
     private final MemberService memberservice;
 
@@ -28,7 +31,7 @@ public class RegisterController {
 
     @GetMapping("/get-register")
     public String getRequestRegistMembers(Model model) {
-        System.out.println("getRequestRegistMembers");
+        logger.debug("/get-register: GET");
         model.addAttribute("memberFormData", new MemberFormData());
 
         return "register";
@@ -36,6 +39,8 @@ public class RegisterController {
 
     @PostMapping("/get-register")
     public String postRequestRegistMembers(@Validated MemberFormData memberFormData, BindingResult bindingResult, Model model) {
+        logger.debug("/get-register: POST");
+
         if (bindingResult.hasErrors()) {
             return "register";
         }
@@ -48,6 +53,7 @@ public class RegisterController {
 
         for (int count = 2; memberservice.getByUserName(output) != null; count++) {
             output = username + count;
+            logger.info("Benutzername musste um Zahl ergänzt werden: " + output);
         }
 
         if (!memberFormData.getPassword().equals(memberFormData.getConfirmation())) {

@@ -2,6 +2,8 @@ package ch.bbw.pr.sospri;
 
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,12 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 @Controller
 public class MembersController {
+    private Logger logger = LoggerFactory.getLogger(MembersController.class);
+
     @Autowired
     MemberService memberservice;
 
     @GetMapping("/get-members")
     public String getRequestMembers(Model model) {
-        System.out.println("getRequestMembers");
+        logger.debug("/get-members: GET");
         model.addAttribute("members", memberservice.getAll());
 
         return "members";
@@ -30,9 +34,9 @@ public class MembersController {
 
     @GetMapping("/edit-member")
     public String editMember(@RequestParam(name = "id", required = true) long id, Model model) {
-        Member member = memberservice.getById(id);
+        logger.debug("/edit-member: GET");
 
-        System.out.println("editMember get: " + member);
+        Member member = memberservice.getById(id);
         model.addAttribute("member", member);
 
         return "editmember";
@@ -40,18 +44,17 @@ public class MembersController {
 
     @PostMapping("/edit-member")
     public String editMember(Member member, Model model) {
-        System.out.println("editMember post: edit member" + member);
+        logger.debug("/edit-member: POST");
+
         Member value = memberservice.getById(member.getId());
-        value.setAuthority(member.getAuthority());
-        System.out.println("editMember post: update member" + value);
-        memberservice.update(value);
+        memberservice.update(value, member.getAuthority());
 
         return "redirect:/get-members";
     }
 
     @GetMapping("/delete-member")
     public String deleteMember(@RequestParam(name = "id", required = true) long id, Model model) {
-        System.out.println("deleteMember: " + id);
+        logger.debug("/delete-member: GET");
         memberservice.deleteById(id);
 
         return "redirect:/get-members";

@@ -1,5 +1,8 @@
 package ch.bbw.pr.sospri.member;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional
 public class MemberService implements UserDetailsService {
+    private Logger logger = LoggerFactory.getLogger(MemberService.class);
     private final MemberRepository repository;
 
     public MemberService(MemberRepository repository) {
@@ -26,6 +30,25 @@ public class MemberService implements UserDetailsService {
     }
 
     public void add(Member member) {
+        repository.save(member);
+    }
+
+    public void update(Member member, String authority) {
+
+        if (!member.getAuthority().equals(authority)) {
+            logger.trace("Rolle wird verändert.");
+
+            Object principal = SecurityContextHolder
+                    .getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+
+            logger.warn("Rolle von " + member.getUsername() + " wurde verändert durch " + ((UserDetails) principal).getUsername());
+        }
+
+        member.setAuthority(authority);
+
+        //save geht auch für update.
         repository.save(member);
     }
 
@@ -47,11 +70,10 @@ public class MemberService implements UserDetailsService {
             }
         }
 
-        System.out.println("MemberService:getById(), id does not exist in repository: " + id);
         return null;
     }
 
-    public Member getByUserName(String username) {
+    public Member getByUserName(String username) throws UsernameNotFoundException {
         Iterable<Member> memberitr = repository.findAll();
 
         for (Member member : memberitr) {
@@ -60,8 +82,7 @@ public class MemberService implements UserDetailsService {
             }
         }
 
-        System.out.println("MemberService:getByUserName(), username does not exist in repository: " + username);
-        return null;
+        throw new UsernameNotFoundException("Benutzername konnte keinem Account zugeordnet werden.");
     }
 
     @Override
