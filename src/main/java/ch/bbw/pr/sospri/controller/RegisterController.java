@@ -1,17 +1,21 @@
 package ch.bbw.pr.sospri.controller;
 
+import ch.bbw.pr.sospri.ReCaptchaValidationService;
 import ch.bbw.pr.sospri.WebSecurityConfig;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberFormData;
 import ch.bbw.pr.sospri.member.MemberService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Register Controller
@@ -24,6 +28,9 @@ public class RegisterController {
     private Logger logger = LoggerFactory.getLogger(RegisterController.class);
     private final WebSecurityConfig webSecurityConfig;
     private final MemberService memberservice;
+
+    @Autowired
+    private ReCaptchaValidationService validator;
 
     public RegisterController(MemberService memberservice, WebSecurityConfig webSecurityConfig) {
         this.memberservice = memberservice;
@@ -39,10 +46,18 @@ public class RegisterController {
     }
 
     @PostMapping("/get-register")
-    public String postRequestRegistMembers(@Validated MemberFormData memberFormData, BindingResult bindingResult, Model model) {
+    public String postRequestRegistMembers(@Validated MemberFormData memberFormData, BindingResult bindingResult, @RequestParam(name = "g-recaptcha-response")
+            String captcha, Model model) {
         logger.debug("/get-register: POST");
 
         if (bindingResult.hasErrors()) {
+            return "register";
+        }
+
+        if (!validator.validateCaptcha(captcha)) {
+            memberFormData.setMessage("Captcha wurde nicht verifiziert!");
+            model.addAttribute("memberFormData", memberFormData);
+
             return "register";
         }
 
@@ -52,7 +67,13 @@ public class RegisterController {
 
         String output = username;
 
-        for (int count = 2; memberservice.getByUserName(output) != null; count++) {
+        for (int count = 2; true; count++) {
+            try {
+                memberservice.getByUserName(output);
+            } catch (UsernameNotFoundException usernameNotFoundException) {
+                break;
+            }
+
             output = username + count;
             logger.info("Benutzername musste um Zahl ergänzt werden: " + output);
         }

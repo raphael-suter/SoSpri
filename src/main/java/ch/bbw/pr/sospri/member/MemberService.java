@@ -107,8 +107,8 @@ public class MemberService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         logger.trace("Method: loadUserByUsername");
-
         Member member = getByUserName(s);
+
         return MemberToUserDetailsMapper.toUserDetails(member);
     }
 }

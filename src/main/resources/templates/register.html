@@ -17,6 +17,8 @@
         $("#includedFooter").load("fragments/footer.html");
       });
     </script>
+    </script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
   </head>
   <body>
     <div id="includedHeader"></div>
@@ -111,6 +113,9 @@
                       </div>
                       <div class="row">
                         <div class="col-md-12">
+                          <div class="g-recaptcha mb-3"
+                               data-sitekey="6Ldu1YwbAAAAAJD4uy8G5pnQACN5i9iduTQmWEHa">
+                          </div>
                           <input
                             class="btn btn-success btn-send"
                             type="submit"
