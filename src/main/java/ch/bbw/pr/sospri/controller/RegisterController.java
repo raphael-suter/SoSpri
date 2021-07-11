@@ -1,5 +1,6 @@
-package ch.bbw.pr.sospri;
+package ch.bbw.pr.sospri.controller;
 
+import ch.bbw.pr.sospri.WebSecurityConfig;
 import ch.bbw.pr.sospri.member.Member;
 import ch.bbw.pr.sospri.member.MemberFormData;
 import ch.bbw.pr.sospri.member.MemberService;
